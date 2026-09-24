@@ -26,9 +26,16 @@ def summarize_ml_prediction(df,target_col,prediction_idx):
     predicted_string = "".join(x)
     return {"predicted_string":predicted_string,"prediction_idx":prediction_idx}
 
+
+def convert_into_numpy_dataset(df,list_of_indices):
+    arr = df.iloc[list_of_indices].to_numpy()
+    return {"list_of_indices":list_of_indices,"arr":arr}
+
+
 def get_meaningful_summarizations(df,target_col,show_details,show_progress):
 
     df2 = df.copy()
+    df3 = df.copy()
 
     if show_details == True:
         l = len(df.columns)
@@ -54,15 +61,27 @@ def get_meaningful_summarizations(df,target_col,show_details,show_progress):
         predicted_string = my_dict['predicted_string']
         prediction_idx = my_dict['prediction_idx']
         results2[predicted_string] = results2.get(predicted_string,[])+[prediction_idx]
-    return results2
+
+    results = []
+    for my_dict in results2.items():
+     
+        my_dict2 = {
+            "df":df3,
+            "list_of_indices":list(my_dict[1])
+
+        }
+        results.append(my_dict2)
+    with WorkerPool(n_jobs=num_cores,daemon=False) as pool:
+        results = pool.map(convert_into_numpy_dataset, results, progress_bar = False)
+    return results
 
 
-# if __name__=="__main__":
-#     file_path = r"C:\Users\gprak\Downloads\Github Repos\summarize-ml-predictions\stockdata.csv"
-#     df = pd.read_csv(file_path)
-#     target_col = "Date"
-#     show_progress = True
-#     show_details = True
-#     results = get_meaningful_summarizations(df,target_col,show_details,show_progress)
-#     from pprint import pprint
-#     pprint(results)
+if __name__=="__main__":
+    file_path = r"C:\Users\gprak\Downloads\Github Repos\summarize-ml-predictions\stockdata.csv"
+    df = pd.read_csv(file_path)
+    target_col = "Date"
+    show_progress = True
+    show_details = True
+    results = get_meaningful_summarizations(df,target_col,show_details,show_progress)
+    from pprint import pprint
+    pprint(results)

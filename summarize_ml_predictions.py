@@ -27,6 +27,9 @@ def summarize_ml_prediction(df,target_col,prediction_idx):
     return {"predicted_string":predicted_string,"prediction_idx":prediction_idx}
 
 def get_meaningful_summarizations(df,target_col,show_details,show_progress):
+
+    df2 = df.copy()
+
     if show_details == True:
         l = len(df.columns)
         print(f"There {l} columns are present:- {list(df.columns)}, Among these the target column identified is {target_col}")
@@ -46,11 +49,16 @@ def get_meaningful_summarizations(df,target_col,show_details,show_progress):
 
     with WorkerPool(n_jobs=num_cores,daemon=False) as pool:
         results = pool.map(summarize_ml_prediction, results, progress_bar = show_progress)
-    return results
+    results2 = {}
+    for my_dict in results:
+        predicted_string = my_dict['predicted_string']
+        prediction_idx = my_dict['prediction_idx']
+        results2[predicted_string] = results2.get(predicted_string,[])+[prediction_idx]
+    return results2
 
 
 if __name__=="__main__":
-    file_path = r"C:\Users\prakhar.a.gandhi\Downloads\pythonApps\stockdata.csv"
+    file_path = r"C:\Users\gprak\Downloads\Github Repos\summarize-ml-predictions\stockdata.csv"
     df = pd.read_csv(file_path)
     target_col = "Date"
     show_progress = True

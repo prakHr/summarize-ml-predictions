@@ -57,12 +57,12 @@ def get_meaningful_summarizations(df,target_col,show_details,show_progress):
     return results2
 
 
-if __name__=="__main__":
-    file_path = r"C:\Users\gprak\Downloads\Github Repos\summarize-ml-predictions\stockdata.csv"
-    df = pd.read_csv(file_path)
-    target_col = "Date"
-    show_progress = True
-    show_details = True
-    results = get_meaningful_summarizations(df,target_col,show_details,show_progress)
-    from pprint import pprint
-    pprint(results)
+# if __name__=="__main__":
+#     file_path = r"C:\Users\gprak\Downloads\Github Repos\summarize-ml-predictions\stockdata.csv"
+#     df = pd.read_csv(file_path)
+#     target_col = "Date"
+#     show_progress = True
+#     show_details = True
+#     results = get_meaningful_summarizations(df,target_col,show_details,show_progress)
+#     from pprint import pprint
+#     pprint(results)
